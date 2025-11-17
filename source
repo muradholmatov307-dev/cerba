@@ -1,772 +1,135 @@
--- Phoenix UI Library Source
-local Phoenix = {Windows = {}}
+-- Phoenix UI Library Example
+local Phoenix = loadstring(game:HttpGet("https://raw.githubusercontent.com/muradholmatov307-dev/cerba/refs/heads/main/source"))()
 
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+-- Create window
+local window = Phoenix:Window("Phoenix UI v2.0")
+window:LockScreenBoundaries(true)
 
-function Phoenix:Window(Title)
-    local Phoenix = {}
-    local SizeX, SizeY = 500, 500
-    local Main = Instance.new("ScreenGui")
-    local MainFrame = Instance.new("Frame")
-    local TopBar = Instance.new("Frame")
-    local TitleLabel = Instance.new("TextLabel")
-    local Close = Instance.new("TextButton")
-    local TabsHolder = Instance.new("Frame")
-    local UIListLayout = Instance.new("UIListLayout")
-    local TabButtons = Instance.new("Frame")
-    local TabButtonsList = Instance.new("UIListLayout")
-    local Content = Instance.new("Frame")
-    local ContentList = Instance.new("UIListLayout")
+-- Send notification
+Phoenix.Notify({
+    Title = "System",
+    Description = "Phoenix UI Loaded Successfully!",
+    Duration = 3
+})
 
-    if gethui then
-        Main.Parent = gethui()
-    elseif syn and syn.protect_gui then
-        syn.protect_gui(Main)
-        Main.Parent = game:GetService("CoreGui")
-    else
-        Main.Parent = game:GetService("CoreGui")
-    end
+-- Main Tab
+local mainTab = window:Tab("Main")
+local mainSection = mainTab:Section("Main Controls")
 
-    Main.Name = "Phoenix"
-    Main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+local title = mainSection:Title("Welcome to Phoenix UI")
+title:ChangeText("Phoenix UI - Advanced Controls")
 
-    MainFrame.Name = "MainFrame"
-    MainFrame.Parent = Main
-    MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Position = UDim2.new(0.5, -SizeX/2, 0.5, -SizeY/2)
-    MainFrame.Size = UDim2.new(0, SizeX, 0, SizeY)
-    MainFrame.ClipsDescendants = true
+local label = mainSection:Label("Status: Ready")
+label:ChangeText("Status: Initialized", true)
 
-    TopBar.Name = "TopBar"
-    TopBar.Parent = MainFrame
-    TopBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    TopBar.BorderSizePixel = 0
-    TopBar.Size = UDim2.new(1, 0, 0, 35)
+local toggle = mainSection:Toggle("Enable Features", function(bool)
+    print("Features:", bool)
+    Phoenix.Notify({
+        Title = "Features",
+        Description = bool and "Features Enabled" or "Features Disabled",
+        Duration = 2
+    })
+end)
+toggle:Set(true, true)
 
-    TitleLabel.Name = "TitleLabel"
-    TitleLabel.Parent = TopBar
-    TitleLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.BackgroundTransparency = 1.000
-    TitleLabel.Position = UDim2.new(0, 15, 0, 0)
-    TitleLabel.Size = UDim2.new(0, 200, 1, 0)
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.Text = Title
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 100, 50)
-    TitleLabel.TextSize = 16.000
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+mainSection:Button("Test Notification", function()
+    Phoenix.Notify({
+        Title = "Test Notification",
+        Description = "This is a test notification from Phoenix UI!",
+        Duration = 3
+    })
+end)
 
-    Close.Name = "Close"
-    Close.Parent = TopBar
-    Close.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-    Close.BorderSizePixel = 0
-    Close.Position = UDim2.new(1, -35, 0.5, -10)
-    Close.Size = UDim2.new(0, 20, 0, 20)
-    Close.Font = Enum.Font.GothamBold
-    Close.Text = "X"
-    Close.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Close.TextSize = 14.000
+-- Visuals Tab
+local visualTab = window:Tab("Visuals")
+local espSection = visualTab:Section("ESP Settings")
 
-    TabsHolder.Name = "TabsHolder"
-    TabsHolder.Parent = MainFrame
-    TabsHolder.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    TabsHolder.BorderSizePixel = 0
-    TabsHolder.Position = UDim2.new(0, 0, 0, 35)
-    TabsHolder.Size = UDim2.new(0, 130, 1, -35)
+local espToggle = espSection:Toggle("Enable ESP", function(bool)
+    Phoenix.Notify({
+        Title = "ESP",
+        Description = bool and "ESP Enabled" or "ESP Disabled",
+        Duration = 2
+    })
+end)
 
-    UIListLayout.Parent = TabsHolder
-    UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Padding = UDim.new(0, 8)
+espSection:Slider("ESP Distance", function(val)
+    print("ESP Distance:", val)
+end, 500, 50)
 
-    TabButtons.Name = "TabButtons"
-    TabButtons.Parent = TabsHolder
-    TabButtons.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    TabButtons.BackgroundTransparency = 1.000
-    TabButtons.Size = UDim2.new(1, 0, 0, 0)
+espSection:ColorWheel("ESP Color", function(color)
+    Phoenix.Notify({
+        Title = "Color Changed",
+        Description = "ESP Color Updated",
+        Duration = 1
+    })
+end)
 
-    TabButtonsList.Parent = TabButtons
-    TabButtonsList.SortOrder = Enum.SortOrder.LayoutOrder
-    TabButtonsList.Padding = UDim.new(0, 5)
+-- Player Tab
+local playerTab = window:Tab("Player")
+local playerSection = playerTab:Section("Player Modifications")
 
-    Content.Name = "Content"
-    Content.Parent = MainFrame
-    Content.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Content.BackgroundTransparency = 1.000
-    Content.Position = UDim2.new(0, 130, 0, 35)
-    Content.Size = UDim2.new(1, -130, 1, -35)
-
-    ContentList.Parent = Content
-    ContentList.SortOrder = Enum.SortOrder.LayoutOrder
-    ContentList.Padding = UDim.new(0, 8)
-
-    -- Drag functionality
-    local Dragging = false
-    local DragInput, DragStart, StartPos
-
-    TopBar.InputBegan:Connect(function(Input)
-        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-            Dragging = true
-            DragStart = Input.Position
-            StartPos = MainFrame.Position
-            
-            Input.Changed:Connect(function()
-                if Input.UserInputState == Enum.UserInputState.End then
-                    Dragging = false
-                end
-            end)
-        end
-    end)
-
-    TopBar.InputChanged:Connect(function(Input)
-        if Input.UserInputType == Enum.UserInputType.MouseMovement then
-            DragInput = Input
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(Input)
-        if Input == DragInput and Dragging then
-            local Delta = Input.Position - DragStart
-            MainFrame.Position = UDim2.new(StartPos.X.Scale, StartPos.X.Offset + Delta.X, StartPos.Y.Scale, StartPos.Y.Offset + Delta.Y)
-        end
-    end)
-
-    Close.MouseButton1Click:Connect(function()
-        Main:Destroy()
-    end)
-
-    Close.MouseEnter:Connect(function()
-        TweenService:Create(Close, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}):Play()
-    end)
-
-    Close.MouseLeave:Connect(function()
-        TweenService:Create(Close, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 50, 50)}):Play()
-    end)
-
-    function Phoenix:LockScreenBoundaries(Value)
-        if Value then
-            local function Update()
-                local ViewportSize = workspace.CurrentCamera.ViewportSize
-                local AbsoluteSize = MainFrame.AbsoluteSize
-                local AbsolutePosition = MainFrame.AbsolutePosition
-                
-                local X = math.clamp(AbsolutePosition.X, 0, ViewportSize.X - AbsoluteSize.X)
-                local Y = math.clamp(AbsolutePosition.Y, 0, ViewportSize.Y - AbsoluteSize.Y)
-                
-                MainFrame.Position = UDim2.new(0, X, 0, Y)
-            end
-            
-            RunService.Heartbeat:Connect(Update)
+local speedSlider = playerSection:Slider("WalkSpeed", function(val)
+    if game.Players.LocalPlayer.Character then
+        local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = val
         end
     end
+end, 100, 16)
 
-    function Phoenix:Tab(TabName)
-        local Tab = {}
-        local TabButton = Instance.new("TextButton")
-        local TabFrame = Instance.new("ScrollingFrame")
-        local TabFrameList = Instance.new("UIListLayout")
-
-        TabButton.Name = TabName
-        TabButton.Parent = TabButtons
-        TabButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        TabButton.BorderSizePixel = 0
-        TabButton.Size = UDim2.new(1, -20, 0, 35)
-        TabButton.Font = Enum.Font.Gotham
-        TabButton.Text = TabName
-        TabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-        TabButton.TextSize = 14.000
-
-        TabFrame.Name = TabName
-        TabFrame.Parent = Content
-        TabFrame.Active = true
-        TabFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TabFrame.BackgroundTransparency = 1.000
-        TabFrame.BorderSizePixel = 0
-        TabFrame.Size = UDim2.new(1, 0, 1, 0)
-        TabFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-        TabFrame.ScrollBarThickness = 3
-        TabFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 100, 50)
-        TabFrame.Visible = false
-
-        TabFrameList.Parent = TabFrame
-        TabFrameList.SortOrder = Enum.SortOrder.LayoutOrder
-        TabFrameList.Padding = UDim.new(0, 8)
-
-        TabFrameList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            TabFrame.CanvasSize = UDim2.new(0, 0, 0, TabFrameList.AbsoluteContentSize.Y + 20)
-        end)
-
-        TabButton.MouseButton1Click:Connect(function()
-            for i, v in next, Content:GetChildren() do
-                if v:IsA("ScrollingFrame") then
-                    v.Visible = false
-                end
-            end
-            
-            for i, v in next, TabButtons:GetChildren() do
-                if v:IsA("TextButton") then
-                    TweenService:Create(v, TweenInfo.new(0.2), {
-                        BackgroundColor3 = Color3.fromRGB(35, 35, 35),
-                        TextColor3 = Color3.fromRGB(200, 200, 200)
-                    }):Play()
-                end
-            end
-            
-            TweenService:Create(TabButton, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(255, 100, 50),
-                TextColor3 = Color3.fromRGB(255, 255, 255)
-            }):Play()
-            
-            TabFrame.Visible = true
-        end)
-
-        if #Content:GetChildren() == 1 then
-            TabFrame.Visible = true
-            TweenService:Create(TabButton, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(255, 100, 50),
-                TextColor3 = Color3.fromRGB(255, 255, 255)
-            }):Play()
+local jumpSlider = playerSection:Slider("JumpPower", function(val)
+    if game.Players.LocalPlayer.Character then
+        local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.JumpPower = val
         end
-
-        function Tab:Section(SectionName)
-            local Section = {}
-            local SectionFrame = Instance.new("Frame")
-            local SectionTitle = Instance.new("TextLabel")
-            local SectionList = Instance.new("UIListLayout")
-
-            SectionFrame.Name = "Section"
-            SectionFrame.Parent = TabFrame
-            SectionFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-            SectionFrame.BorderSizePixel = 0
-            SectionFrame.Size = UDim2.new(1, -10, 0, 0)
-
-            SectionTitle.Name = "SectionTitle"
-            SectionTitle.Parent = SectionFrame
-            SectionTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            SectionTitle.BackgroundTransparency = 1.000
-            SectionTitle.Size = UDim2.new(1, 0, 0, 35)
-            SectionTitle.Font = Enum.Font.GothamBold
-            SectionTitle.Text = SectionName
-            SectionTitle.TextColor3 = Color3.fromRGB(255, 100, 50)
-            SectionTitle.TextSize = 14.000
-
-            SectionList.Parent = SectionFrame
-            SectionList.SortOrder = Enum.SortOrder.LayoutOrder
-            SectionList.Padding = UDim.new(0, 6)
-
-            SectionList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                SectionFrame.Size = UDim2.new(1, -10, 0, SectionList.AbsoluteContentSize.Y + 40)
-            end)
-
-            function Section:Title(Text)
-                local Title = {}
-                local TitleLabel = Instance.new("TextLabel")
-
-                TitleLabel.Name = "Title"
-                TitleLabel.Parent = SectionFrame
-                TitleLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                TitleLabel.BackgroundTransparency = 1.000
-                TitleLabel.Size = UDim2.new(1, 0, 0, 25)
-                TitleLabel.Font = Enum.Font.Gotham
-                TitleLabel.Text = Text
-                TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                TitleLabel.TextSize = 13.000
-
-                function Title:ChangeText(NewText)
-                    TitleLabel.Text = NewText
-                end
-
-                return Title
-            end
-
-            function Section:Label(Text, TextSize, TextColor)
-                local Label = {}
-                local LabelLabel = Instance.new("TextLabel")
-
-                LabelLabel.Name = "Label"
-                LabelLabel.Parent = SectionFrame
-                LabelLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                LabelLabel.BackgroundTransparency = 1.000
-                LabelLabel.Size = UDim2.new(1, 0, 0, 22)
-                LabelLabel.Font = Enum.Font.Gotham
-                LabelLabel.Text = Text
-                LabelLabel.TextColor3 = TextColor or Color3.fromRGB(200, 200, 200)
-                LabelLabel.TextSize = TextSize or 12.000
-
-                function Label:ChangeText(NewText, PlayAnimation)
-                    LabelLabel.Text = NewText
-                    if PlayAnimation then
-                        local originalSize = LabelLabel.TextSize
-                        TweenService:Create(LabelLabel, TweenInfo.new(0.1), {TextSize = originalSize + 2}):Play()
-                        wait(0.1)
-                        TweenService:Create(LabelLabel, TweenInfo.new(0.1), {TextSize = originalSize}):Play()
-                    end
-                end
-
-                return Label
-            end
-
-            function Section:Toggle(ToggleName, Callback)
-                local Toggle = {}
-                local Toggled = false
-                local ToggleFrame = Instance.new("Frame")
-                local ToggleTitle = Instance.new("TextLabel")
-                local ToggleButton = Instance.new("TextButton")
-
-                ToggleFrame.Name = "Toggle"
-                ToggleFrame.Parent = SectionFrame
-                ToggleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                ToggleFrame.BackgroundTransparency = 1.000
-                ToggleFrame.Size = UDim2.new(1, 0, 0, 30)
-
-                ToggleTitle.Name = "ToggleTitle"
-                ToggleTitle.Parent = ToggleFrame
-                ToggleTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                ToggleTitle.BackgroundTransparency = 1.000
-                ToggleTitle.Size = UDim2.new(1, -45, 1, 0)
-                ToggleTitle.Font = Enum.Font.Gotham
-                ToggleTitle.Text = ToggleName
-                ToggleTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                ToggleTitle.TextSize = 12.000
-                ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                ToggleButton.Name = "ToggleButton"
-                ToggleButton.Parent = ToggleFrame
-                ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                ToggleButton.BorderSizePixel = 0
-                ToggleButton.Position = UDim2.new(1, -35, 0.5, -10)
-                ToggleButton.Size = UDim2.new(0, 25, 0, 20)
-                ToggleButton.Font = Enum.Font.Gotham
-                ToggleButton.Text = ""
-                ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-                ToggleButton.TextSize = 14.000
-
-                local function UpdateToggle()
-                    if Toggled then
-                        TweenService:Create(ToggleButton, TweenInfo.new(0.2), {
-                            BackgroundColor3 = Color3.fromRGB(255, 100, 50)
-                        }):Play()
-                    else
-                        TweenService:Create(ToggleButton, TweenInfo.new(0.2), {
-                            BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                        }):Play()
-                    end
-                end
-
-                ToggleButton.MouseButton1Click:Connect(function()
-                    Toggled = not Toggled
-                    UpdateToggle()
-                    Callback(Toggled)
-                end)
-
-                function Toggle:Set(Value, Call)
-                    Toggled = Value
-                    UpdateToggle()
-                    if Call then
-                        Callback(Toggled)
-                    end
-                end
-
-                return Toggle
-            end
-
-            function Section:Button(ButtonName, Callback)
-                local Button = {}
-                local ButtonButton = Instance.new("TextButton")
-
-                ButtonButton.Name = "Button"
-                ButtonButton.Parent = SectionFrame
-                ButtonButton.BackgroundColor3 = Color3.fromRGB(255, 100, 50)
-                ButtonButton.BorderSizePixel = 0
-                ButtonButton.Size = UDim2.new(1, 0, 0, 32)
-                ButtonButton.Font = Enum.Font.GothamBold
-                ButtonButton.Text = ButtonName
-                ButtonButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                ButtonButton.TextSize = 12.000
-
-                ButtonButton.MouseButton1Click:Connect(function()
-                    TweenService:Create(ButtonButton, TweenInfo.new(0.1), {
-                        BackgroundColor3 = Color3.fromRGB(255, 120, 70)
-                    }):Play()
-                    wait(0.1)
-                    TweenService:Create(ButtonButton, TweenInfo.new(0.1), {
-                        BackgroundColor3 = Color3.fromRGB(255, 100, 50)
-                    }):Play()
-                    Callback()
-                end)
-
-                ButtonButton.MouseEnter:Connect(function()
-                    TweenService:Create(ButtonButton, TweenInfo.new(0.2), {
-                        BackgroundColor3 = Color3.fromRGB(255, 110, 60)
-                    }):Play()
-                end)
-
-                ButtonButton.MouseLeave:Connect(function()
-                    TweenService:Create(ButtonButton, TweenInfo.new(0.2), {
-                        BackgroundColor3 = Color3.fromRGB(255, 100, 50)
-                    }):Play()
-                end)
-
-                return Button
-            end
-
-            function Section:Slider(SliderName, Callback, Max, Min)
-                local Slider = {}
-                local Value = Min or 0
-                local MaxValue = Max or 100
-                local MinValue = Min or 0
-                local SliderFrame = Instance.new("Frame")
-                local SliderTitle = Instance.new("TextLabel")
-                local SliderBack = Instance.new("Frame")
-                local SliderFill = Instance.new("Frame")
-                local SliderButton = Instance.new("TextButton")
-                local SliderValue = Instance.new("TextLabel")
-
-                SliderFrame.Name = "Slider"
-                SliderFrame.Parent = SectionFrame
-                SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SliderFrame.BackgroundTransparency = 1.000
-                SliderFrame.Size = UDim2.new(1, 0, 0, 45)
-
-                SliderTitle.Name = "SliderTitle"
-                SliderTitle.Parent = SliderFrame
-                SliderTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SliderTitle.BackgroundTransparency = 1.000
-                SliderTitle.Size = UDim2.new(1, 0, 0, 20)
-                SliderTitle.Font = Enum.Font.Gotham
-                SliderTitle.Text = SliderName
-                SliderTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                SliderTitle.TextSize = 12.000
-                SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                SliderBack.Name = "SliderBack"
-                SliderBack.Parent = SliderFrame
-                SliderBack.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                SliderBack.BorderSizePixel = 0
-                SliderBack.Position = UDim2.new(0, 0, 0, 30)
-                SliderBack.Size = UDim2.new(1, 0, 0, 6)
-
-                SliderFill.Name = "SliderFill"
-                SliderFill.Parent = SliderBack
-                SliderFill.BackgroundColor3 = Color3.fromRGB(255, 100, 50)
-                SliderFill.BorderSizePixel = 0
-                SliderFill.Size = UDim2.new((Value - MinValue) / (MaxValue - MinValue), 0, 1, 0)
-
-                SliderButton.Name = "SliderButton"
-                SliderButton.Parent = SliderBack
-                SliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SliderButton.BorderSizePixel = 0
-                SliderButton.Position = UDim2.new((Value - MinValue) / (MaxValue - MinValue), -6, 0, -3)
-                SliderButton.Size = UDim2.new(0, 12, 0, 12)
-                SliderButton.Font = Enum.Font.Gotham
-                SliderButton.Text = ""
-                SliderButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-                SliderButton.TextSize = 14.000
-
-                SliderValue.Name = "SliderValue"
-                SliderValue.Parent = SliderFrame
-                SliderValue.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SliderValue.BackgroundTransparency = 1.000
-                SliderValue.Position = UDim2.new(1, -45, 0, 0)
-                SliderValue.Size = UDim2.new(0, 45, 0, 20)
-                SliderValue.Font = Enum.Font.Gotham
-                SliderValue.Text = tostring(Value)
-                SliderValue.TextColor3 = Color3.fromRGB(255, 255, 255)
-                SliderValue.TextSize = 12.000
-
-                local SliderDragging = false
-
-                local function Update(Input)
-                    local X = (Input.Position.X - SliderBack.AbsolutePosition.X) / SliderBack.AbsoluteSize.X
-                    X = math.clamp(X, 0, 1)
-                    Value = math.floor(MinValue + (MaxValue - MinValue) * X)
-                    SliderFill.Size = UDim2.new(X, 0, 1, 0)
-                    SliderButton.Position = UDim2.new(X, -6, 0, -3)
-                    SliderValue.Text = tostring(Value)
-                    Callback(Value)
-                end
-
-                SliderButton.InputBegan:Connect(function(Input)
-                    if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        SliderDragging = true
-                    end
-                end)
-
-                SliderButton.InputEnded:Connect(function(Input)
-                    if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        SliderDragging = false
-                    end
-                end)
-
-                UserInputService.InputChanged:Connect(function(Input)
-                    if SliderDragging and Input.UserInputType == Enum.UserInputType.MouseMovement then
-                        Update(Input)
-                    end
-                end)
-
-                return Slider
-            end
-
-            function Section:Dropdown(DropdownName)
-                local Dropdown = {}
-                local Open = false
-                local DropdownFrame = Instance.new("Frame")
-                local DropdownButton = Instance.new("TextButton")
-                local DropdownList = Instance.new("Frame")
-                local DropdownListLayout = Instance.new("UIListLayout")
-
-                DropdownFrame.Name = "Dropdown"
-                DropdownFrame.Parent = SectionFrame
-                DropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                DropdownFrame.BackgroundTransparency = 1.000
-                DropdownFrame.Size = UDim2.new(1, 0, 0, 35)
-
-                DropdownButton.Name = "DropdownButton"
-                DropdownButton.Parent = DropdownFrame
-                DropdownButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                DropdownButton.BorderSizePixel = 0
-                DropdownButton.Size = UDim2.new(1, 0, 0, 35)
-                DropdownButton.Font = Enum.Font.Gotham
-                DropdownButton.Text = DropdownName
-                DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                DropdownButton.TextSize = 12.000
-
-                DropdownList.Name = "DropdownList"
-                DropdownList.Parent = DropdownFrame
-                DropdownList.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                DropdownList.BorderSizePixel = 0
-                DropdownList.Position = UDim2.new(0, 0, 1, 5)
-                DropdownList.Size = UDim2.new(1, 0, 0, 0)
-                DropdownList.Visible = false
-                DropdownList.ClipsDescendants = true
-
-                DropdownListLayout.Parent = DropdownList
-                DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
-                DropdownListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    DropdownList.Size = UDim2.new(1, 0, 0, DropdownListLayout.AbsoluteContentSize.Y)
-                end)
-
-                DropdownButton.MouseButton1Click:Connect(function()
-                    Open = not Open
-                    DropdownList.Visible = Open
-                end)
-
-                function Dropdown:ChangeText(NewText)
-                    DropdownButton.Text = NewText
-                end
-
-                function Dropdown:Toggle(ToggleName)
-                    local Toggle = {}
-                    local Toggled = false
-                    local ToggleFrame = Instance.new("Frame")
-                    local ToggleTitle = Instance.new("TextLabel")
-                    local ToggleButton = Instance.new("TextButton")
-
-                    ToggleFrame.Name = "Toggle"
-                    ToggleFrame.Parent = DropdownList
-                    ToggleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    ToggleFrame.BackgroundTransparency = 1.000
-                    ToggleFrame.Size = UDim2.new(1, 0, 0, 30)
-
-                    ToggleTitle.Name = "ToggleTitle"
-                    ToggleTitle.Parent = ToggleFrame
-                    ToggleTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    ToggleTitle.BackgroundTransparency = 1.000
-                    ToggleTitle.Size = UDim2.new(1, -40, 1, 0)
-                    ToggleTitle.Font = Enum.Font.Gotham
-                    ToggleTitle.Text = ToggleName
-                    ToggleTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    ToggleTitle.TextSize = 12.000
-                    ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                    ToggleButton.Name = "ToggleButton"
-                    ToggleButton.Parent = ToggleFrame
-                    ToggleButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-                    ToggleButton.BorderSizePixel = 0
-                    ToggleButton.Position = UDim2.new(1, -30, 0.5, -10)
-                    ToggleButton.Size = UDim2.new(0, 20, 0, 20)
-                    ToggleButton.Font = Enum.Font.Gotham
-                    ToggleButton.Text = ""
-                    ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-                    ToggleButton.TextSize = 14.000
-
-                    ToggleButton.MouseButton1Click:Connect(function()
-                        Toggled = not Toggled
-                        if Toggled then
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 100, 50)}):Play()
-                        else
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
-                        end
-                    end)
-
-                    function Toggle:Set(Value)
-                        Toggled = Value
-                        if Toggled then
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 100, 50)}):Play()
-                        else
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
-                        end
-                    end
-
-                    return Toggle
-                end
-
-                return Dropdown
-            end
-
-            function Section:Keybind(KeybindName, Callback, DefaultKey)
-                local Keybind = {}
-                local Key = DefaultKey or "None"
-                local KeybindFrame = Instance.new("Frame")
-                local KeybindTitle = Instance.new("TextLabel")
-                local KeybindButton = Instance.new("TextButton")
-
-                KeybindFrame.Name = "Keybind"
-                KeybindFrame.Parent = SectionFrame
-                KeybindFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                KeybindFrame.BackgroundTransparency = 1.000
-                KeybindFrame.Size = UDim2.new(1, 0, 0, 35)
-
-                KeybindTitle.Name = "KeybindTitle"
-                KeybindTitle.Parent = KeybindFrame
-                KeybindTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                KeybindTitle.BackgroundTransparency = 1.000
-                KeybindTitle.Size = UDim2.new(1, -80, 1, 0)
-                KeybindTitle.Font = Enum.Font.Gotham
-                KeybindTitle.Text = KeybindName
-                KeybindTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                KeybindTitle.TextSize = 12.000
-                KeybindTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                KeybindButton.Name = "KeybindButton"
-                KeybindButton.Parent = KeybindFrame
-                KeybindButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                KeybindButton.BorderSizePixel = 0
-                KeybindButton.Position = UDim2.new(1, -75, 0.5, -12)
-                KeybindButton.Size = UDim2.new(0, 70, 0, 24)
-                KeybindButton.Font = Enum.Font.Gotham
-                KeybindButton.Text = Key
-                KeybindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                KeybindButton.TextSize = 12.000
-
-                KeybindButton.MouseButton1Click:Connect(function()
-                    KeybindButton.Text = "..."
-                    local Connection
-                    Connection = UserInputService.InputBegan:Connect(function(Input)
-                        if Input.UserInputType == Enum.UserInputType.Keyboard then
-                            Key = Input.KeyCode.Name
-                            KeybindButton.Text = Key
-                            Connection:Disconnect()
-                        end
-                    end)
-                end)
-
-                UserInputService.InputBegan:Connect(function(Input)
-                    if Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name == Key then
-                        Callback()
-                    end
-                end)
-
-                return Keybind
-            end
-
-            function Section:TextBox(TextBoxName, Callback)
-                local TextBox = {}
-                local TextBoxFrame = Instance.new("Frame")
-                local TextBoxTitle = Instance.new("TextLabel")
-                local TextBoxBox = Instance.new("TextBox")
-
-                TextBoxFrame.Name = "TextBox"
-                TextBoxFrame.Parent = SectionFrame
-                TextBoxFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                TextBoxFrame.BackgroundTransparency = 1.000
-                TextBoxFrame.Size = UDim2.new(1, 0, 0, 55)
-
-                TextBoxTitle.Name = "TextBoxTitle"
-                TextBoxTitle.Parent = TextBoxFrame
-                TextBoxTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                TextBoxTitle.BackgroundTransparency = 1.000
-                TextBoxTitle.Size = UDim2.new(1, 0, 0, 20)
-                TextBoxTitle.Font = Enum.Font.Gotham
-                TextBoxTitle.Text = TextBoxName
-                TextBoxTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                TextBoxTitle.TextSize = 12.000
-                TextBoxTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                TextBoxBox.Name = "TextBoxBox"
-                TextBoxBox.Parent = TextBoxFrame
-                TextBoxBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                TextBoxBox.BorderSizePixel = 0
-                TextBoxBox.Position = UDim2.new(0, 0, 0, 30)
-                TextBoxBox.Size = UDim2.new(1, 0, 0, 25)
-                TextBoxBox.Font = Enum.Font.Gotham
-                TextBoxBox.PlaceholderText = TextBoxName
-                TextBoxBox.Text = ""
-                TextBoxBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-                TextBoxBox.TextSize = 12.000
-
-                TextBoxBox.FocusLost:Connect(function()
-                    Callback(TextBoxBox.Text)
-                end)
-
-                return TextBox
-            end
-
-            function Section:ColorWheel(ColorWheelName, Callback)
-                local ColorWheel = {}
-                local Color = Color3.fromRGB(255, 100, 50)
-                local ColorWheelFrame = Instance.new("Frame")
-                local ColorWheelTitle = Instance.new("TextLabel")
-                local ColorWheelButton = Instance.new("TextButton")
-
-                ColorWheelFrame.Name = "ColorWheel"
-                ColorWheelFrame.Parent = SectionFrame
-                ColorWheelFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                ColorWheelFrame.BackgroundTransparency = 1.000
-                ColorWheelFrame.Size = UDim2.new(1, 0, 0, 35)
-
-                ColorWheelTitle.Name = "ColorWheelTitle"
-                ColorWheelTitle.Parent = ColorWheelFrame
-                ColorWheelTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                ColorWheelTitle.BackgroundTransparency = 1.000
-                ColorWheelTitle.Size = UDim2.new(1, -45, 1, 0)
-                ColorWheelTitle.Font = Enum.Font.Gotham
-                ColorWheelTitle.Text = ColorWheelName
-                ColorWheelTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                ColorWheelTitle.TextSize = 12.000
-                ColorWheelTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                ColorWheelButton.Name = "ColorWheelButton"
-                ColorWheelButton.Parent = ColorWheelFrame
-                ColorWheelButton.BackgroundColor3 = Color
-                ColorWheelButton.BorderSizePixel = 0
-                ColorWheelButton.Position = UDim2.new(1, -40, 0.5, -12)
-                ColorWheelButton.Size = UDim2.new(0, 35, 0, 24)
-                ColorWheelButton.Font = Enum.Font.Gotham
-                ColorWheelButton.Text = ""
-                ColorWheelButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-                ColorWheelButton.TextSize = 14.000
-
-                ColorWheelButton.MouseButton1Click:Connect(function()
-                    Color = Color3.new(math.random(), math.random(), math.random())
-                    ColorWheelButton.BackgroundColor3 = Color
-                    Callback(Color)
-                end)
-
-                return ColorWheel
-            end
-
-            return Section
-        end
-
-        return Tab
     end
+end, 100, 50)
 
-    table.insert(self.Windows, Phoenix)
-    return Phoenix
-end
+playerSection:Button("Reset Character", function()
+    if game.Players.LocalPlayer.Character then
+        game.Players.LocalPlayer.Character:BreakJoints()
+        Phoenix.Notify({
+            Title = "Character",
+            Description = "Character Reset",
+            Duration = 2
+        })
+    end
+end)
 
-return Phoenix
+-- Settings Tab
+local settingsTab = window:Tab("Settings")
+local configSection = settingsTab:Section("Configuration")
+
+local keybind = configSection:Keybind("Toggle UI", function()
+    Phoenix.Notify({
+        Title = "UI Toggle",
+        Description = "UI Visibility Toggled",
+        Duration = 1
+    })
+end, "RightControl")
+
+configSection:TextBox("Config Name", function(text)
+    Phoenix.Notify({
+        Title = "Config Saved",
+        Description = "Configuration: " .. text,
+        Duration = 2
+    })
+end)
+
+-- Multiple notifications test
+wait(2)
+Phoenix.Notify({
+    Title = "System Ready",
+    Description = "All features loaded successfully",
+    Duration = 3
+})
+
+wait(1)
+Phoenix.Notify({
+    Title = "Welcome",
+    Description = "Enjoy using Phoenix UI!",
+    Duration = 4
+})
+
+print("Phoenix UI Example Loaded Successfully!")
