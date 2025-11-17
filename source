@@ -1,16 +1,17 @@
-local Cerberus = {Windows = {}}
+-- Phoenix UI Library Source
+local Phoenix = {Windows = {}}
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
-function Cerberus:Window(Title)
-    local Cerberus = {}
+function Phoenix:Window(Title)
+    local Phoenix = {}
     local SizeX, SizeY = 500, 500
     local Main = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
     local TopBar = Instance.new("Frame")
-    local Title = Instance.new("TextLabel")
+    local TitleLabel = Instance.new("TextLabel")
     local Close = Instance.new("TextButton")
     local TabsHolder = Instance.new("Frame")
     local UIListLayout = Instance.new("UIListLayout")
@@ -28,56 +29,57 @@ function Cerberus:Window(Title)
         Main.Parent = game:GetService("CoreGui")
     end
 
-    Main.Name = "Cerberus"
+    Main.Name = "Phoenix"
     Main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = Main
-    MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     MainFrame.BorderSizePixel = 0
     MainFrame.Position = UDim2.new(0.5, -SizeX/2, 0.5, -SizeY/2)
     MainFrame.Size = UDim2.new(0, SizeX, 0, SizeY)
+    MainFrame.ClipsDescendants = true
 
     TopBar.Name = "TopBar"
     TopBar.Parent = MainFrame
-    TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    TopBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     TopBar.BorderSizePixel = 0
-    TopBar.Size = UDim2.new(1, 0, 0, 30)
+    TopBar.Size = UDim2.new(1, 0, 0, 35)
 
-    Title.Name = "Title"
-    Title.Parent = TopBar
-    Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Title.BackgroundTransparency = 1.000
-    Title.Position = UDim2.new(0, 10, 0, 0)
-    Title.Size = UDim2.new(0, 200, 1, 0)
-    Title.Font = Enum.Font.Gotham
-    Title.Text = Title
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.TextSize = 14.000
-    Title.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.Name = "TitleLabel"
+    TitleLabel.Parent = TopBar
+    TitleLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.BackgroundTransparency = 1.000
+    TitleLabel.Position = UDim2.new(0, 15, 0, 0)
+    TitleLabel.Size = UDim2.new(0, 200, 1, 0)
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.Text = Title
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 100, 50)
+    TitleLabel.TextSize = 16.000
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     Close.Name = "Close"
     Close.Parent = TopBar
-    Close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Close.BackgroundTransparency = 1.000
-    Close.Position = UDim2.new(1, -30, 0, 0)
-    Close.Size = UDim2.new(0, 30, 1, 0)
-    Close.Font = Enum.Font.Gotham
+    Close.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    Close.BorderSizePixel = 0
+    Close.Position = UDim2.new(1, -35, 0.5, -10)
+    Close.Size = UDim2.new(0, 20, 0, 20)
+    Close.Font = Enum.Font.GothamBold
     Close.Text = "X"
     Close.TextColor3 = Color3.fromRGB(255, 255, 255)
     Close.TextSize = 14.000
 
     TabsHolder.Name = "TabsHolder"
     TabsHolder.Parent = MainFrame
-    TabsHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    TabsHolder.BackgroundTransparency = 1.000
-    TabsHolder.Position = UDim2.new(0, 0, 0, 30)
-    TabsHolder.Size = UDim2.new(0, 120, 1, -30)
+    TabsHolder.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    TabsHolder.BorderSizePixel = 0
+    TabsHolder.Position = UDim2.new(0, 0, 0, 35)
+    TabsHolder.Size = UDim2.new(0, 130, 1, -35)
 
     UIListLayout.Parent = TabsHolder
     UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Padding = UDim.new(0, 5)
+    UIListLayout.Padding = UDim.new(0, 8)
 
     TabButtons.Name = "TabButtons"
     TabButtons.Parent = TabsHolder
@@ -93,13 +95,14 @@ function Cerberus:Window(Title)
     Content.Parent = MainFrame
     Content.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Content.BackgroundTransparency = 1.000
-    Content.Position = UDim2.new(0, 120, 0, 30)
-    Content.Size = UDim2.new(1, -120, 1, -30)
+    Content.Position = UDim2.new(0, 130, 0, 35)
+    Content.Size = UDim2.new(1, -130, 1, -35)
 
     ContentList.Parent = Content
     ContentList.SortOrder = Enum.SortOrder.LayoutOrder
-    ContentList.Padding = UDim.new(0, 5)
+    ContentList.Padding = UDim.new(0, 8)
 
+    -- Drag functionality
     local Dragging = false
     local DragInput, DragStart, StartPos
 
@@ -134,7 +137,15 @@ function Cerberus:Window(Title)
         Main:Destroy()
     end)
 
-    function Cerberus:LockScreenBoundaries(Value)
+    Close.MouseEnter:Connect(function()
+        TweenService:Create(Close, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}):Play()
+    end)
+
+    Close.MouseLeave:Connect(function()
+        TweenService:Create(Close, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 50, 50)}):Play()
+    end)
+
+    function Phoenix:LockScreenBoundaries(Value)
         if Value then
             local function Update()
                 local ViewportSize = workspace.CurrentCamera.ViewportSize
@@ -151,7 +162,7 @@ function Cerberus:Window(Title)
         end
     end
 
-    function Cerberus:Tab(TabName, TabImage)
+    function Phoenix:Tab(TabName)
         local Tab = {}
         local TabButton = Instance.new("TextButton")
         local TabFrame = Instance.new("ScrollingFrame")
@@ -161,10 +172,10 @@ function Cerberus:Window(Title)
         TabButton.Parent = TabButtons
         TabButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         TabButton.BorderSizePixel = 0
-        TabButton.Size = UDim2.new(1, -10, 0, 30)
+        TabButton.Size = UDim2.new(1, -20, 0, 35)
         TabButton.Font = Enum.Font.Gotham
         TabButton.Text = TabName
-        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
         TabButton.TextSize = 14.000
 
         TabFrame.Name = TabName
@@ -176,14 +187,15 @@ function Cerberus:Window(Title)
         TabFrame.Size = UDim2.new(1, 0, 1, 0)
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
         TabFrame.ScrollBarThickness = 3
+        TabFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 100, 50)
         TabFrame.Visible = false
 
         TabFrameList.Parent = TabFrame
         TabFrameList.SortOrder = Enum.SortOrder.LayoutOrder
-        TabFrameList.Padding = UDim.new(0, 5)
+        TabFrameList.Padding = UDim.new(0, 8)
 
         TabFrameList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            TabFrame.CanvasSize = UDim2.new(0, 0, 0, TabFrameList.AbsoluteContentSize.Y + 10)
+            TabFrame.CanvasSize = UDim2.new(0, 0, 0, TabFrameList.AbsoluteContentSize.Y + 20)
         end)
 
         TabButton.MouseButton1Click:Connect(function()
@@ -192,11 +204,30 @@ function Cerberus:Window(Title)
                     v.Visible = false
                 end
             end
+            
+            for i, v in next, TabButtons:GetChildren() do
+                if v:IsA("TextButton") then
+                    TweenService:Create(v, TweenInfo.new(0.2), {
+                        BackgroundColor3 = Color3.fromRGB(35, 35, 35),
+                        TextColor3 = Color3.fromRGB(200, 200, 200)
+                    }):Play()
+                end
+            end
+            
+            TweenService:Create(TabButton, TweenInfo.new(0.2), {
+                BackgroundColor3 = Color3.fromRGB(255, 100, 50),
+                TextColor3 = Color3.fromRGB(255, 255, 255)
+            }):Play()
+            
             TabFrame.Visible = true
         end)
 
         if #Content:GetChildren() == 1 then
             TabFrame.Visible = true
+            TweenService:Create(TabButton, TweenInfo.new(0.2), {
+                BackgroundColor3 = Color3.fromRGB(255, 100, 50),
+                TextColor3 = Color3.fromRGB(255, 255, 255)
+            }):Play()
         end
 
         function Tab:Section(SectionName)
@@ -207,7 +238,7 @@ function Cerberus:Window(Title)
 
             SectionFrame.Name = "Section"
             SectionFrame.Parent = TabFrame
-            SectionFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+            SectionFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
             SectionFrame.BorderSizePixel = 0
             SectionFrame.Size = UDim2.new(1, -10, 0, 0)
 
@@ -215,18 +246,18 @@ function Cerberus:Window(Title)
             SectionTitle.Parent = SectionFrame
             SectionTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             SectionTitle.BackgroundTransparency = 1.000
-            SectionTitle.Size = UDim2.new(1, 0, 0, 30)
-            SectionTitle.Font = Enum.Font.Gotham
+            SectionTitle.Size = UDim2.new(1, 0, 0, 35)
+            SectionTitle.Font = Enum.Font.GothamBold
             SectionTitle.Text = SectionName
-            SectionTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+            SectionTitle.TextColor3 = Color3.fromRGB(255, 100, 50)
             SectionTitle.TextSize = 14.000
 
             SectionList.Parent = SectionFrame
             SectionList.SortOrder = Enum.SortOrder.LayoutOrder
-            SectionList.Padding = UDim.new(0, 5)
+            SectionList.Padding = UDim.new(0, 6)
 
             SectionList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                SectionFrame.Size = UDim2.new(1, -10, 0, SectionList.AbsoluteContentSize.Y + 35)
+                SectionFrame.Size = UDim2.new(1, -10, 0, SectionList.AbsoluteContentSize.Y + 40)
             end)
 
             function Section:Title(Text)
@@ -237,11 +268,11 @@ function Cerberus:Window(Title)
                 TitleLabel.Parent = SectionFrame
                 TitleLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 TitleLabel.BackgroundTransparency = 1.000
-                TitleLabel.Size = UDim2.new(1, 0, 0, 20)
+                TitleLabel.Size = UDim2.new(1, 0, 0, 25)
                 TitleLabel.Font = Enum.Font.Gotham
                 TitleLabel.Text = Text
                 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                TitleLabel.TextSize = 12.000
+                TitleLabel.TextSize = 13.000
 
                 function Title:ChangeText(NewText)
                     TitleLabel.Text = NewText
@@ -258,14 +289,20 @@ function Cerberus:Window(Title)
                 LabelLabel.Parent = SectionFrame
                 LabelLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 LabelLabel.BackgroundTransparency = 1.000
-                LabelLabel.Size = UDim2.new(1, 0, 0, 20)
+                LabelLabel.Size = UDim2.new(1, 0, 0, 22)
                 LabelLabel.Font = Enum.Font.Gotham
                 LabelLabel.Text = Text
-                LabelLabel.TextColor3 = TextColor or Color3.fromRGB(255, 255, 255)
+                LabelLabel.TextColor3 = TextColor or Color3.fromRGB(200, 200, 200)
                 LabelLabel.TextSize = TextSize or 12.000
 
                 function Label:ChangeText(NewText, PlayAnimation)
                     LabelLabel.Text = NewText
+                    if PlayAnimation then
+                        local originalSize = LabelLabel.TextSize
+                        TweenService:Create(LabelLabel, TweenInfo.new(0.1), {TextSize = originalSize + 2}):Play()
+                        wait(0.1)
+                        TweenService:Create(LabelLabel, TweenInfo.new(0.1), {TextSize = originalSize}):Play()
+                    end
                 end
 
                 return Label
@@ -288,7 +325,7 @@ function Cerberus:Window(Title)
                 ToggleTitle.Parent = ToggleFrame
                 ToggleTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 ToggleTitle.BackgroundTransparency = 1.000
-                ToggleTitle.Size = UDim2.new(1, -40, 1, 0)
+                ToggleTitle.Size = UDim2.new(1, -45, 1, 0)
                 ToggleTitle.Font = Enum.Font.Gotham
                 ToggleTitle.Text = ToggleName
                 ToggleTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -297,32 +334,36 @@ function Cerberus:Window(Title)
 
                 ToggleButton.Name = "ToggleButton"
                 ToggleButton.Parent = ToggleFrame
-                ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 ToggleButton.BorderSizePixel = 0
-                ToggleButton.Position = UDim2.new(1, -30, 0.5, -10)
-                ToggleButton.Size = UDim2.new(0, 20, 0, 20)
+                ToggleButton.Position = UDim2.new(1, -35, 0.5, -10)
+                ToggleButton.Size = UDim2.new(0, 25, 0, 20)
                 ToggleButton.Font = Enum.Font.Gotham
                 ToggleButton.Text = ""
                 ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
                 ToggleButton.TextSize = 14.000
 
+                local function UpdateToggle()
+                    if Toggled then
+                        TweenService:Create(ToggleButton, TweenInfo.new(0.2), {
+                            BackgroundColor3 = Color3.fromRGB(255, 100, 50)
+                        }):Play()
+                    else
+                        TweenService:Create(ToggleButton, TweenInfo.new(0.2), {
+                            BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+                        }):Play()
+                    end
+                end
+
                 ToggleButton.MouseButton1Click:Connect(function()
                     Toggled = not Toggled
-                    if Toggled then
-                        TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 170, 255)}):Play()
-                    else
-                        TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
-                    end
+                    UpdateToggle()
                     Callback(Toggled)
                 end)
 
                 function Toggle:Set(Value, Call)
                     Toggled = Value
-                    if Toggled then
-                        TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 170, 255)}):Play()
-                    else
-                        TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
-                    end
+                    UpdateToggle()
                     if Call then
                         Callback(Toggled)
                     end
@@ -337,16 +378,35 @@ function Cerberus:Window(Title)
 
                 ButtonButton.Name = "Button"
                 ButtonButton.Parent = SectionFrame
-                ButtonButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                ButtonButton.BackgroundColor3 = Color3.fromRGB(255, 100, 50)
                 ButtonButton.BorderSizePixel = 0
-                ButtonButton.Size = UDim2.new(1, 0, 0, 30)
-                ButtonButton.Font = Enum.Font.Gotham
+                ButtonButton.Size = UDim2.new(1, 0, 0, 32)
+                ButtonButton.Font = Enum.Font.GothamBold
                 ButtonButton.Text = ButtonName
                 ButtonButton.TextColor3 = Color3.fromRGB(255, 255, 255)
                 ButtonButton.TextSize = 12.000
 
                 ButtonButton.MouseButton1Click:Connect(function()
+                    TweenService:Create(ButtonButton, TweenInfo.new(0.1), {
+                        BackgroundColor3 = Color3.fromRGB(255, 120, 70)
+                    }):Play()
+                    wait(0.1)
+                    TweenService:Create(ButtonButton, TweenInfo.new(0.1), {
+                        BackgroundColor3 = Color3.fromRGB(255, 100, 50)
+                    }):Play()
                     Callback()
+                end)
+
+                ButtonButton.MouseEnter:Connect(function()
+                    TweenService:Create(ButtonButton, TweenInfo.new(0.2), {
+                        BackgroundColor3 = Color3.fromRGB(255, 110, 60)
+                    }):Play()
+                end)
+
+                ButtonButton.MouseLeave:Connect(function()
+                    TweenService:Create(ButtonButton, TweenInfo.new(0.2), {
+                        BackgroundColor3 = Color3.fromRGB(255, 100, 50)
+                    }):Play()
                 end)
 
                 return Button
@@ -355,6 +415,8 @@ function Cerberus:Window(Title)
             function Section:Slider(SliderName, Callback, Max, Min)
                 local Slider = {}
                 local Value = Min or 0
+                local MaxValue = Max or 100
+                local MinValue = Min or 0
                 local SliderFrame = Instance.new("Frame")
                 local SliderTitle = Instance.new("TextLabel")
                 local SliderBack = Instance.new("Frame")
@@ -366,7 +428,7 @@ function Cerberus:Window(Title)
                 SliderFrame.Parent = SectionFrame
                 SliderFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 SliderFrame.BackgroundTransparency = 1.000
-                SliderFrame.Size = UDim2.new(1, 0, 0, 40)
+                SliderFrame.Size = UDim2.new(1, 0, 0, 45)
 
                 SliderTitle.Name = "SliderTitle"
                 SliderTitle.Parent = SliderFrame
@@ -381,23 +443,23 @@ function Cerberus:Window(Title)
 
                 SliderBack.Name = "SliderBack"
                 SliderBack.Parent = SliderFrame
-                SliderBack.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                SliderBack.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 SliderBack.BorderSizePixel = 0
-                SliderBack.Position = UDim2.new(0, 0, 0, 25)
-                SliderBack.Size = UDim2.new(1, 0, 0, 5)
+                SliderBack.Position = UDim2.new(0, 0, 0, 30)
+                SliderBack.Size = UDim2.new(1, 0, 0, 6)
 
                 SliderFill.Name = "SliderFill"
                 SliderFill.Parent = SliderBack
-                SliderFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+                SliderFill.BackgroundColor3 = Color3.fromRGB(255, 100, 50)
                 SliderFill.BorderSizePixel = 0
-                SliderFill.Size = UDim2.new((Value - Min) / (Max or 100 - Min), 0, 1, 0)
+                SliderFill.Size = UDim2.new((Value - MinValue) / (MaxValue - MinValue), 0, 1, 0)
 
                 SliderButton.Name = "SliderButton"
                 SliderButton.Parent = SliderBack
                 SliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 SliderButton.BorderSizePixel = 0
-                SliderButton.Position = UDim2.new((Value - Min) / (Max or 100 - Min), -5, 0, -2.5)
-                SliderButton.Size = UDim2.new(0, 10, 0, 10)
+                SliderButton.Position = UDim2.new((Value - MinValue) / (MaxValue - MinValue), -6, 0, -3)
+                SliderButton.Size = UDim2.new(0, 12, 0, 12)
                 SliderButton.Font = Enum.Font.Gotham
                 SliderButton.Text = ""
                 SliderButton.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -407,19 +469,21 @@ function Cerberus:Window(Title)
                 SliderValue.Parent = SliderFrame
                 SliderValue.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 SliderValue.BackgroundTransparency = 1.000
-                SliderValue.Position = UDim2.new(1, -40, 0, 0)
-                SliderValue.Size = UDim2.new(0, 40, 0, 20)
+                SliderValue.Position = UDim2.new(1, -45, 0, 0)
+                SliderValue.Size = UDim2.new(0, 45, 0, 20)
                 SliderValue.Font = Enum.Font.Gotham
                 SliderValue.Text = tostring(Value)
                 SliderValue.TextColor3 = Color3.fromRGB(255, 255, 255)
                 SliderValue.TextSize = 12.000
 
+                local SliderDragging = false
+
                 local function Update(Input)
                     local X = (Input.Position.X - SliderBack.AbsolutePosition.X) / SliderBack.AbsoluteSize.X
                     X = math.clamp(X, 0, 1)
-                    Value = math.floor(Min + (Max or 100 - Min) * X)
+                    Value = math.floor(MinValue + (MaxValue - MinValue) * X)
                     SliderFill.Size = UDim2.new(X, 0, 1, 0)
-                    SliderButton.Position = UDim2.new(X, -5, 0, -2.5)
+                    SliderButton.Position = UDim2.new(X, -6, 0, -3)
                     SliderValue.Text = tostring(Value)
                     Callback(Value)
                 end
@@ -457,13 +521,13 @@ function Cerberus:Window(Title)
                 DropdownFrame.Parent = SectionFrame
                 DropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 DropdownFrame.BackgroundTransparency = 1.000
-                DropdownFrame.Size = UDim2.new(1, 0, 0, 30)
+                DropdownFrame.Size = UDim2.new(1, 0, 0, 35)
 
                 DropdownButton.Name = "DropdownButton"
                 DropdownButton.Parent = DropdownFrame
-                DropdownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                DropdownButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 DropdownButton.BorderSizePixel = 0
-                DropdownButton.Size = UDim2.new(1, 0, 0, 30)
+                DropdownButton.Size = UDim2.new(1, 0, 0, 35)
                 DropdownButton.Font = Enum.Font.Gotham
                 DropdownButton.Text = DropdownName
                 DropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -532,18 +596,18 @@ function Cerberus:Window(Title)
                     ToggleButton.MouseButton1Click:Connect(function()
                         Toggled = not Toggled
                         if Toggled then
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 170, 255)}):Play()
+                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 100, 50)}):Play()
                         else
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
+                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
                         end
                     end)
 
                     function Toggle:Set(Value)
                         Toggled = Value
                         if Toggled then
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 170, 255)}):Play()
+                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 100, 50)}):Play()
                         else
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
+                            TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
                         end
                     end
 
@@ -551,105 +615,6 @@ function Cerberus:Window(Title)
                 end
 
                 return Dropdown
-            end
-
-            function Section:SearchBar(Placeholder)
-                local SearchBar = {}
-                local SearchFrame = Instance.new("Frame")
-                local SearchBox = Instance.new("TextBox")
-                local SearchList = Instance.new("Frame")
-                local SearchListLayout = Instance.new("UIListLayout")
-
-                SearchFrame.Name = "SearchBar"
-                SearchFrame.Parent = SectionFrame
-                SearchFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SearchFrame.BackgroundTransparency = 1.000
-                SearchFrame.Size = UDim2.new(1, 0, 0, 30)
-
-                SearchBox.Name = "SearchBox"
-                SearchBox.Parent = SearchFrame
-                SearchBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                SearchBox.BorderSizePixel = 0
-                SearchBox.Size = UDim2.new(1, 0, 0, 30)
-                SearchBox.Font = Enum.Font.Gotham
-                SearchBox.PlaceholderText = Placeholder
-                SearchBox.Text = ""
-                SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-                SearchBox.TextSize = 12.000
-
-                SearchList.Name = "SearchList"
-                SearchList.Parent = SearchFrame
-                SearchList.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                SearchList.BorderSizePixel = 0
-                SearchList.Position = UDim2.new(0, 0, 1, 5)
-                SearchList.Size = UDim2.new(1, 0, 0, 0)
-                SearchList.Visible = false
-                SearchList.ClipsDescendants = true
-
-                SearchListLayout.Parent = SearchList
-                SearchListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
-                SearchListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    SearchList.Size = UDim2.new(1, 0, 0, SearchListLayout.AbsoluteContentSize.Y)
-                end)
-
-                function SearchBar:Toggle(ToggleName)
-                    local Toggle = {}
-                    local Toggled = false
-                    local ToggleFrame = Instance.new("Frame")
-                    local ToggleTitle = Instance.new("TextLabel")
-                    local ToggleButton = Instance.new("TextButton")
-
-                    ToggleFrame.Name = "Toggle"
-                    ToggleFrame.Parent = SearchList
-                    ToggleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    ToggleFrame.BackgroundTransparency = 1.000
-                    ToggleFrame.Size = UDim2.new(1, 0, 0, 30)
-
-                    ToggleTitle.Name = "ToggleTitle"
-                    ToggleTitle.Parent = ToggleFrame
-                    ToggleTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    ToggleTitle.BackgroundTransparency = 1.000
-                    ToggleTitle.Size = UDim2.new(1, -40, 1, 0)
-                    ToggleTitle.Font = Enum.Font.Gotham
-                    ToggleTitle.Text = ToggleName
-                    ToggleTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    ToggleTitle.TextSize = 12.000
-                    ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-                    ToggleButton.Name = "ToggleButton"
-                    ToggleButton.Parent = ToggleFrame
-                    ToggleButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-                    ToggleButton.BorderSizePixel = 0
-                    ToggleButton.Position = UDim2.new(1, -30, 0.5, -10)
-                    ToggleButton.Size = UDim2.new(0, 20, 0, 20)
-                    ToggleButton.Font = Enum.Font.Gotham
-                    ToggleButton.Text = ""
-                    ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-                    ToggleButton.TextSize = 14.000
-
-                    ToggleButton.MouseButton1Click:Connect(function()
-                        Toggled = not Toggled
-                        if Toggled then
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 170, 255)}):Play()
-                        else
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
-                        end
-                    end)
-
-                    function Toggle:Set(Value)
-                        Toggled = Value
-                        if Toggled then
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 170, 255)}):Play()
-                        else
-                            TweenService:Create(ToggleButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
-                        end
-                    end
-
-                    return Toggle
-                end
-
-                return SearchBar
             end
 
             function Section:Keybind(KeybindName, Callback, DefaultKey)
@@ -663,7 +628,7 @@ function Cerberus:Window(Title)
                 KeybindFrame.Parent = SectionFrame
                 KeybindFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 KeybindFrame.BackgroundTransparency = 1.000
-                KeybindFrame.Size = UDim2.new(1, 0, 0, 30)
+                KeybindFrame.Size = UDim2.new(1, 0, 0, 35)
 
                 KeybindTitle.Name = "KeybindTitle"
                 KeybindTitle.Parent = KeybindFrame
@@ -678,10 +643,10 @@ function Cerberus:Window(Title)
 
                 KeybindButton.Name = "KeybindButton"
                 KeybindButton.Parent = KeybindFrame
-                KeybindButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                KeybindButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 KeybindButton.BorderSizePixel = 0
-                KeybindButton.Position = UDim2.new(1, -70, 0.5, -10)
-                KeybindButton.Size = UDim2.new(0, 60, 0, 20)
+                KeybindButton.Position = UDim2.new(1, -75, 0.5, -12)
+                KeybindButton.Size = UDim2.new(0, 70, 0, 24)
                 KeybindButton.Font = Enum.Font.Gotham
                 KeybindButton.Text = Key
                 KeybindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -718,7 +683,7 @@ function Cerberus:Window(Title)
                 TextBoxFrame.Parent = SectionFrame
                 TextBoxFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 TextBoxFrame.BackgroundTransparency = 1.000
-                TextBoxFrame.Size = UDim2.new(1, 0, 0, 50)
+                TextBoxFrame.Size = UDim2.new(1, 0, 0, 55)
 
                 TextBoxTitle.Name = "TextBoxTitle"
                 TextBoxTitle.Parent = TextBoxFrame
@@ -733,9 +698,9 @@ function Cerberus:Window(Title)
 
                 TextBoxBox.Name = "TextBoxBox"
                 TextBoxBox.Parent = TextBoxFrame
-                TextBoxBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                TextBoxBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 TextBoxBox.BorderSizePixel = 0
-                TextBoxBox.Position = UDim2.new(0, 0, 0, 25)
+                TextBoxBox.Position = UDim2.new(0, 0, 0, 30)
                 TextBoxBox.Size = UDim2.new(1, 0, 0, 25)
                 TextBoxBox.Font = Enum.Font.Gotham
                 TextBoxBox.PlaceholderText = TextBoxName
@@ -752,7 +717,7 @@ function Cerberus:Window(Title)
 
             function Section:ColorWheel(ColorWheelName, Callback)
                 local ColorWheel = {}
-                local Color = Color3.fromRGB(255, 255, 255)
+                local Color = Color3.fromRGB(255, 100, 50)
                 local ColorWheelFrame = Instance.new("Frame")
                 local ColorWheelTitle = Instance.new("TextLabel")
                 local ColorWheelButton = Instance.new("TextButton")
@@ -761,13 +726,13 @@ function Cerberus:Window(Title)
                 ColorWheelFrame.Parent = SectionFrame
                 ColorWheelFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 ColorWheelFrame.BackgroundTransparency = 1.000
-                ColorWheelFrame.Size = UDim2.new(1, 0, 0, 30)
+                ColorWheelFrame.Size = UDim2.new(1, 0, 0, 35)
 
                 ColorWheelTitle.Name = "ColorWheelTitle"
                 ColorWheelTitle.Parent = ColorWheelFrame
                 ColorWheelTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 ColorWheelTitle.BackgroundTransparency = 1.000
-                ColorWheelTitle.Size = UDim2.new(1, -40, 1, 0)
+                ColorWheelTitle.Size = UDim2.new(1, -45, 1, 0)
                 ColorWheelTitle.Font = Enum.Font.Gotham
                 ColorWheelTitle.Text = ColorWheelName
                 ColorWheelTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -778,15 +743,14 @@ function Cerberus:Window(Title)
                 ColorWheelButton.Parent = ColorWheelFrame
                 ColorWheelButton.BackgroundColor3 = Color
                 ColorWheelButton.BorderSizePixel = 0
-                ColorWheelButton.Position = UDim2.new(1, -30, 0.5, -10)
-                ColorWheelButton.Size = UDim2.new(0, 20, 0, 20)
+                ColorWheelButton.Position = UDim2.new(1, -40, 0.5, -12)
+                ColorWheelButton.Size = UDim2.new(0, 35, 0, 24)
                 ColorWheelButton.Font = Enum.Font.Gotham
                 ColorWheelButton.Text = ""
                 ColorWheelButton.TextColor3 = Color3.fromRGB(0, 0, 0)
                 ColorWheelButton.TextSize = 14.000
 
                 ColorWheelButton.MouseButton1Click:Connect(function()
-                    -- Simple color picker implementation
                     Color = Color3.new(math.random(), math.random(), math.random())
                     ColorWheelButton.BackgroundColor3 = Color
                     Callback(Color)
@@ -801,8 +765,8 @@ function Cerberus:Window(Title)
         return Tab
     end
 
-    table.insert(self.Windows, Cerberus)
-    return Cerberus
+    table.insert(self.Windows, Phoenix)
+    return Phoenix
 end
 
-return Cerberus
+return Phoenix
